@@ -1,0 +1,19 @@
+# Reasonix
+.reasonix/
+
+# IDE
+.vs/
+.vscode/
+*.user
+*.suo
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Build outputs
+bin/
+obj/
+*.exe
+*.dll
+*.pdb
