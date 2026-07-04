@@ -133,33 +133,32 @@ int main(void)
     MX_I2C1_Init();
     MX_TIM2_Init();     // 启动 TIM2 1秒定时器 (软件RTC)
 
-    /* 芯片自检: PA2 LED 闪烁两次 (证明芯片正常工作) */
+    /* 芯片自检: 板载 LED 闪烁两次 (PC13 低电平点亮) */
     for (int i = 0; i < 2; i++) {
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);  // 亮
         HAL_Delay(200);
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, GPIO_PIN_RESET);
-        if (i < 1) HAL_Delay(200);  // 最后一次不等待
+        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);    // 灭
+        if (i < 1) HAL_Delay(200);
     }
 
     /* OLED 初始化 */
-    // 诊断: PA2 LED 指示 I2C 通信状态
     if (OLED_Init()) {
-        // 成功: PA2 长亮 200ms
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, GPIO_PIN_SET);
+        // OLED 成功: 板载 LED 闪一下
+        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
         HAL_Delay(200);
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
 
         OLED_ClearBuffer();
         OLED_PutString(16, 1, "OLED OK");
         OLED_UpdateScreen();
     } else {
-        // 失败: PA2 快速闪烁 20 次 (亮100ms灭100ms)
+        // 失败: 板载 LED 快速闪烁 20 次
         for (int i = 0; i < 20; i++) {
-            HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_2);
+            HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
             HAL_Delay(100);
         }
-        // 闪完后保持常亮
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, GPIO_PIN_SET);
+        // 闪完后常亮 (I2C 错误指示)
+        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
     }
 
     /* 软件计时器初始化 */
@@ -190,7 +189,7 @@ int main(void)
 
     /* 调度器启动后不会到达这里 */
     for (;;) {
-        HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_2);  // 错误指示灯
+        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);  // 错误指示灯
         HAL_Delay(500);
     }
 }
@@ -279,6 +278,7 @@ void MX_GPIO_Init(void)
 
     __HAL_RCC_GPIOA_CLK_ENABLE();
     __HAL_RCC_GPIOB_CLK_ENABLE();
+    __HAL_RCC_GPIOC_CLK_ENABLE();
 
     /* PA0: 按键输入 (外部中断) */
     GPIO_InitStruct.Pin   = GPIO_PIN_0;
@@ -292,6 +292,14 @@ void MX_GPIO_Init(void)
     GPIO_InitStruct.Pull  = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+    /* PC13: 板载 LED (低电平点亮) */
+    GPIO_InitStruct.Pin   = GPIO_PIN_13;
+    GPIO_InitStruct.Mode  = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull  = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);  // 初始熄灭
 
     /* 中断优先级配置 */
     HAL_NVIC_SetPriority(EXTI0_IRQn, 5, 0);
