@@ -49,6 +49,7 @@ static volatile uint8_t button_pressed = 0;
 static void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_I2C1_Init(void);
+static void MX_TIM2_Init(void);
 
 /* ========== FreeRTOS 任务 ========== */
 
@@ -130,6 +131,7 @@ int main(void)
     /* 外设初始化 */
     MX_GPIO_Init();
     MX_I2C1_Init();
+    MX_TIM2_Init();     // 启动 TIM2 1秒定时器 (软件RTC)
 
     /* OLED 初始化 */
     OLED_Init();
@@ -183,7 +185,7 @@ int main(void)
  */
 
 /* 使用 TIM2 作为 1 秒定时器，避免与 FreeRTOS 的 SysTick 冲突 */
-static TIM_HandleTypeDef htim2;
+TIM_HandleTypeDef htim2;
 
 static void MX_TIM2_Init(void)
 {
@@ -195,6 +197,10 @@ static void MX_TIM2_Init(void)
     htim2.Init.Period            = 10000 - 1;     // 10kHz / 10000 = 1Hz
     htim2.Init.ClockDivision     = TIM_CLOCKDIVISION_DIV1;
     htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
+
+    __HAL_RCC_TIM2_CLK_ENABLE();
+    HAL_NVIC_SetPriority(TIM2_IRQn, 5, 0);
+    HAL_NVIC_EnableIRQ(TIM2_IRQn);
 
     HAL_TIM_Base_Init(&htim2);
     HAL_TIM_Base_Start_IT(&htim2);
@@ -217,6 +223,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 }
 
 /* ========== 硬件初始化 ========== */
+
+I2C_HandleTypeDef hi2c1;   // I2C 句柄 (CubeMX 生成于此)
 
 void SystemClock_Config(void)
 {
@@ -277,17 +285,6 @@ void MX_I2C1_Init(void)
     hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
     hi2c1.Init.NoStretchMode   = I2C_NOSTRETCH_DISABLE;
     HAL_I2C_Init(&hi2c1);
-}
-
-/* ========== 中断服务函数 ========== */
-void EXTI0_IRQHandler(void)
-{
-    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
-}
-
-void TIM2_IRQHandler(void)
-{
-    HAL_TIM_IRQHandler(&htim2);
 }
 
 /* ========== FreeRTOS 钩子 ========== */

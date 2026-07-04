@@ -97,8 +97,10 @@ static void draw_sensor_page(void)
     snprintf(buf, sizeof(buf), "AZ:%6d", s_az);
     OLED_PutString(0, 4, buf);
 
-    /* 第5行: 温度 */
-    snprintf(buf, sizeof(buf), "TEMP:%5.1f C", (double)s_temp);
+    /* 第5行: 温度 (×10转为整数显示一位小数，避免nano.specs不支持%f) */
+    int16_t temp_int = (int16_t)(s_temp * 10.0f);
+    snprintf(buf, sizeof(buf), "TEMP:%3d.%d C",
+             temp_int / 10, (temp_int < 0 ? -temp_int : temp_int) % 10);
     OLED_PutString(0, 6, buf);
 
     /* 第7行: 提示 */
