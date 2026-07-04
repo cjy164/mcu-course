@@ -134,8 +134,17 @@ int main(void)
     MX_TIM2_Init();     // 启动 TIM2 1秒定时器 (软件RTC)
 
     /* OLED 初始化 */
-    OLED_Init();
-    OLED_PutString(20, 3, "Starting...");
+    if (OLED_Init()) {
+        OLED_PutString(16, 1, "OLED OK      ");
+        OLED_PutString(20, 3, "Starting...");
+    } else {
+        OLED_PutString(16, 1, "OLED FAIL!   ");
+        // PA2 快速闪烁提示错误
+        for (int i = 0; i < 10; i++) {
+            HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_2);
+            HAL_Delay(100);
+        }
+    }
     OLED_UpdateScreen();
 
     /* 软件计时器初始化 */

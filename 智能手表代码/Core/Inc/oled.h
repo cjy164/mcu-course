@@ -16,6 +16,7 @@
 
 /* I2C 地址 (7位地址左移1位) */
 #define OLED_I2C_ADDR                   (0x3C << 1)
+#define OLED_I2C_ADDR_ALT               (0x3D << 1)
 
 /* ---- 基本命令 ---- */
 #define OLED_CMD_SET_CONTRAST           0x81
@@ -42,9 +43,11 @@
 
 /*
  * OLED 初始化
- * 发送完整的初始化序列
+ * 自动检测 I2C 地址 (0x3C/0x3D)
+ * 支持 SSD1306 和 SH1106 驱动芯片
+ * 返回: 1=成功, 0=失败
  */
-void OLED_Init(void);
+uint8_t OLED_Init(void);
 
 /*
  * 清空显存 (不刷新屏幕)
