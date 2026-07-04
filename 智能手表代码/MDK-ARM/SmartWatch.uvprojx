@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Keil MDK-ARM 工程配置参考
+  将此文件放入 MDK-ARM/ 目录下，命名为 SmartWatch.uvprojx
+  
+  或使用 CubeMX 生成基础工程后，覆盖 Core/ 下的源文件。
+  
+  需要添加的源文件:
+    Core\Src\main.c
+    Core\Src\i2c.c
+    Core\Src\oled.c
+    Core\Src\mpu6050.c
+    Core\Src\soft_timer.c
+    Core\Src\ui.c
+  
+  需要设置的 Include Paths:
+    Core\Inc
+    .\RTE\_SmartWatch
+    .\Middlewares\Third_Party\FreeRTOS\Source\include
+    .\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS_V2
+    .\Drivers\CMSIS\Include
+    .\Drivers\CMSIS\Device\ST\STM32F1xx\Include
+    .\Drivers\STM32F1xx_HAL_Driver\Inc
+-->
+<Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="Keil_uvprojx.xsd">
+  <Targets>
+    <Target>
+      <TargetName>SmartWatch</TargetName>
+      <Device>
+        <DeviceName>STM32F103C8</DeviceName>
+        <Vendor>STMicroelectronics</Vendor>
+        <Cpu>IRAM(0x20000000,0x0000A000) IROM(0x08000000,0x00010000) CPUTYPE("Cortex-M3") CLOCK(72000000) ELITTLE</Cpu>
+        <FlashUtilSpec></FlashUtilSpec>
+        <Define>USE_HAL_DRIVER, STM32F103x8</Define>
+      </Device>
+    </Target>
+  </Targets>
+</Project>

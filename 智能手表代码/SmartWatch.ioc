@@ -1,0 +1,61 @@
+# STM32CubeMX .ioc 配置文件
+# 将此文件保存为 SmartWatch.ioc，用 CubeMX 打开即可生成完整工程
+#
+# 手动配置步骤（如无法直接打开 .ioc，按以下设置）:
+
+# ===== 芯片选择 =====
+# PartNumber: STM32F103C8Tx
+
+# ===== RCC =====
+# HSE: Crystal/Ceramic Resonator
+# LSE: Disabled
+
+# ===== SYS =====
+# Timebase Source: TIM1
+# Debug: Serial Wire
+
+# ===== I2C1 =====
+# Mode: I2C
+# PB6: I2C1_SCL
+# PB7: I2C1_SDA
+# Parameter: Speed Mode = Standard (100KHz)
+
+# ===== USART1 (Optional) =====
+# Mode: Asynchronous
+# PA9: USART1_TX
+# PA10: USART1_RX
+# Parameter: Baud Rate = 9600
+
+# ===== GPIO =====
+# PA0: GPIO_EXTI0, GPIO mode = External Interrupt Mode with Falling edge trigger detection
+#        GPIO Pull-up/Pull-down = Pull-up
+# PA2: GPIO_Output, Output level = Low
+
+# ===== TIM2 =====
+# Clock Source: Internal Clock
+# Prescaler: 7200-1
+# Counter Period: 10000-1
+# Auto-reload preload: Enable
+# NVIC Settings: TIM2 global interrupt = Enabled
+
+# ===== NVIC =====
+# EXTI line0 interrupt: Enabled, Preemption=5, Sub=0
+# TIM2 global interrupt: Enabled, Preemption=5, Sub=0
+
+# ===== FreeRTOS =====
+# Interface: CMSIS_V2
+# Memory Management: heap_4
+
+# ===== Clock Configuration =====
+# HSE: 8MHz
+# PLL Source: HSE
+# PLL Mul: x9
+# System Clock: 72MHz
+# APB1 Prescaler: /2 (36MHz)
+# APB2 Prescaler: /1 (72MHz)
+# Flash Latency: 2
+
+# ===== Project Settings =====
+# Project Name: SmartWatch
+# Toolchain/IDE: MDK-ARM (或 STM32CubeIDE)
+# Generate peripheral initialization as a pair of .c/.h files per peripheral: ✓
