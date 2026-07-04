@@ -143,23 +143,11 @@ int main(void)
 
     /* OLED 初始化 */
     if (OLED_Init()) {
-        // OLED 成功: 板载 LED 闪一下
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
-        HAL_Delay(200);
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
-
         OLED_ClearBuffer();
         OLED_PutString(16, 1, "OLED OK");
         OLED_UpdateScreen();
-    } else {
-        // 失败: 板载 LED 快速闪烁 20 次
-        for (int i = 0; i < 20; i++) {
-            HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-            HAL_Delay(100);
-        }
-        // 闪完后常亮 (I2C 错误指示)
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
     }
+    /* OLED 失败时不控制 LED，仅靠 OLED_Init 内的棋盘格测试可知 */
 
     /* 软件计时器初始化 */
     SoftTimer_Init();
