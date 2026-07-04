@@ -134,18 +134,25 @@ int main(void)
     MX_TIM2_Init();     // 启动 TIM2 1秒定时器 (软件RTC)
 
     /* OLED 初始化 */
+    // 诊断: PA2 LED 指示 I2C 通信状态
     if (OLED_Init()) {
-        OLED_PutString(16, 1, "OLED OK      ");
-        OLED_PutString(20, 3, "Starting...");
+        // 成功: PA2 长亮 200ms
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, GPIO_PIN_SET);
+        HAL_Delay(200);
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, GPIO_PIN_RESET);
+
+        OLED_ClearBuffer();
+        OLED_PutString(16, 1, "OLED OK");
+        OLED_UpdateScreen();
     } else {
-        OLED_PutString(16, 1, "OLED FAIL!   ");
-        // PA2 快速闪烁提示错误
-        for (int i = 0; i < 10; i++) {
+        // 失败: PA2 快速闪烁 20 次 (亮100ms灭100ms)
+        for (int i = 0; i < 20; i++) {
             HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_2);
             HAL_Delay(100);
         }
+        // 闪完后保持常亮
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, GPIO_PIN_SET);
     }
-    OLED_UpdateScreen();
 
     /* 软件计时器初始化 */
     SoftTimer_Init();
