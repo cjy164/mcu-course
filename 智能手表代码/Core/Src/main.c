@@ -133,6 +133,14 @@ int main(void)
     MX_I2C1_Init();
     MX_TIM2_Init();     // 启动 TIM2 1秒定时器 (软件RTC)
 
+    /* 芯片自检: PA2 LED 闪烁两次 (证明芯片正常工作) */
+    for (int i = 0; i < 2; i++) {
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, GPIO_PIN_SET);
+        HAL_Delay(200);
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, GPIO_PIN_RESET);
+        if (i < 1) HAL_Delay(200);  // 最后一次不等待
+    }
+
     /* OLED 初始化 */
     // 诊断: PA2 LED 指示 I2C 通信状态
     if (OLED_Init()) {
