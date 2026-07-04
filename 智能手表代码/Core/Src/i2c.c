@@ -4,8 +4,8 @@
 
 #include "i2c.h"
 
-/* I2C 句柄 - 由 CubeMX 生成并命名 */
-I2C_HandleTypeDef hi2c1;
+/* I2C 句柄 - 由 CubeMX 在 main.c 中生成 */
+extern I2C_HandleTypeDef hi2c1;
 
 HAL_StatusTypeDef I2C_WriteRegister(uint8_t dev_addr, uint8_t reg, uint8_t data)
 {

@@ -3,6 +3,7 @@
  */
 
 #include "soft_timer.h"
+#include <stdio.h>
 
 /* 全局系统时间 */
 volatile RTC_Time_t g_sys_time = {
